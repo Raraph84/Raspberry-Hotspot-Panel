@@ -17,7 +17,7 @@ export default class Login extends Component {
 
     componentDidMount() {
         if (localStorage.token)
-            window.location.href = "/";
+            window.location.reload();
     }
 
     render() {
@@ -29,7 +29,7 @@ export default class Login extends Component {
             this.setState({ requesting: true, info: null });
             login(this.passwordRef.current.value).then((token) => {
                 localStorage.token = token;
-                window.location.href = "/";
+                window.location.reload();
             }).catch((error) => {
                 if (error === "Invalid password")
                     this.setState({ requesting: false, info: <Info>Mot de passe incorrect !</Info> });
