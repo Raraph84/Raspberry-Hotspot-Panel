@@ -1,0 +1,19 @@
+.login {
+
+    .form {
+        display: inline-block;
+        padding: 25px;
+        margin-top: 15px;
+        border-radius: 15px;
+        background-color: #29435C;
+
+        button {
+            margin-top: 15px;
+        }
+
+        .loading,
+        .info {
+            margin-bottom: 15px;
+        }
+    }
+}

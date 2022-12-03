@@ -1,0 +1,109 @@
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@import url("https://api.fontshare.com/v2/css?f[]=chillax@500&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Chillax, sans-serif;
+    background-color: #152A38;
+    color: white;
+    padding: 10vh 15vw;
+    text-align: center;
+
+    @media screen and (orientation: portrait) {
+        padding: 5vh 5vw;
+    }
+}
+
+.content {
+    .title {
+        font-size: 50px;
+    }
+
+    .subtitle {
+        font-size: 24px;
+        font-style: italic;
+    }
+
+    @media screen and (orientation: portrait) {
+        .title {
+            font-size: 32px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+        }
+    }
+}
+
+.label {
+    display: inline-block;
+    font-size: 20px;
+    margin: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+    display: inline-block;
+    padding: 5px;
+    background-color: #152A38;
+    border-width: 0;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    outline: none;
+
+    &:disabled {
+        opacity: 0.75;
+    }
+}
+
+.button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #152A38;
+    border-width: 0;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    outline: none;
+    cursor: pointer;
+    transition-property: transform;
+    transition-duration: 200ms;
+
+    &:active {
+        transform: translateY(2px);
+    }
+
+    &:disabled {
+        transform: translateY(0);
+        opacity: 0.75;
+        cursor: default;
+    }
+}
+
+.loading i {
+    font-size: 42px;
+    animation: spin 1s infinite linear;
+}
+
+.info {
+    width: max-content;
+    margin: auto;
+    padding: 10px;
+    font-size: 18px;
+    color: red;
+    border: 1px solid;
+    border-radius: 5px;
+    animation-duration: 0.75s;
+    animation-name: bounceIn;
+}
