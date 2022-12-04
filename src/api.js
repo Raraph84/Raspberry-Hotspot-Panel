@@ -52,6 +52,17 @@ export const getWifiStatus = async () => new Promise((resolve, reject) => {
     }).catch((error) => reject(error));
 });
 
+export const stopSystem = async () => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/system/stop", {
+        method: "POST",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) resolve();
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
 export const startWifi = async () => new Promise((resolve, reject) => {
 
     fetch(HOST + "/wifi/start", {
