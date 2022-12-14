@@ -110,3 +110,14 @@ export const getWifiClient = async (mac) => new Promise((resolve, reject) => {
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
 });
+
+export const getDhcpLeases = async () => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/dhcp/leases", {
+        method: "GET",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) res.json().then((res) => resolve(res.leases)).catch((error) => reject(error));
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
