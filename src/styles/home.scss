@@ -3,18 +3,18 @@
     .boxes {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: space-evenly;
         gap: 30px;
         margin-top: 15px;
-        font-size: 18px;
 
         .box {
             display: flex;
             flex-direction: column;
+            justify-content: center;
             padding: 25px;
             border-radius: 15px;
             background-color: #29435C;
+            font-size: 18px;
 
             .box-title {
                 font-size: 22px;
@@ -58,9 +58,10 @@
         @media screen and (orientation: portrait) {
             flex-direction: column;
             align-items: initial;
-            font-size: 14px;
 
             .box {
+                font-size: 14px;
+
                 .box-content {
                     text-align: center;
                 }

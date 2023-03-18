@@ -16,12 +16,12 @@ export default class Home extends Component {
             <div className="title">Accueil</div>
 
             <div className="boxes">
+                <AccessPoint />
                 <SystemStats />
                 <BandwidthUsage />
-                <AccessPoint />
                 <WifiClients />
-                <Bans />
                 <DhcpLeases />
+                <Bans />
             </div>
         </div>;
     }
