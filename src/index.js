@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./login";
 import Home from "./home";
+import WifiClients from "./wifiClients";
+import DhcpLeases from "./dhcpLeases";
 import { NotFound } from "./other";
 
 import "./styles/common.scss";
@@ -19,6 +21,8 @@ class Website extends Component {
             <div className="content">
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/wificlients" element={<WifiClients />} />
+                    <Route path="/dhcpleases" element={<DhcpLeases />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>

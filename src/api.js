@@ -1,4 +1,4 @@
-const HOST = process.env.NODE_ENV === "production" ? document.location.origin + ":8080" : "http://192.168.5.10:8080";
+const HOST = process.env.NODE_ENV === "production" ? document.location.origin + ":8080" : "http://192.168.1.16:8080";
 
 export const login = async (password) => new Promise((resolve, reject) => {
 

@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
 import { getDhcpLeases, getSystemBandwidthUsage, getSystemStats, getWifiClients, getWifiStatus, startWifi, stopSystem, stopWifi } from "./api";
@@ -268,6 +269,7 @@ class WifiClients extends Component {
                 </> : null}
                 <div className="buttons">
                     <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
+                    <Link className="button" to="/wificlients">Voir les appareils</Link>
                 </div>
             </div>
         </div >;
@@ -316,6 +318,7 @@ class DhcpLeases extends Component {
                 </> : null}
                 <div className="buttons">
                     <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
+                    <Link className="button" to="/dhcpleases">Voir les baux</Link>
                 </div>
             </div>
         </div >;

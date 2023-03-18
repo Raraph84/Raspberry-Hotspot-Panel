@@ -1,13 +1,18 @@
-.home {
+.wifi-clients {
 
     .boxes {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: center;
         gap: 30px;
         margin-top: 15px;
-        font-size: 18px;
+
+        .clients {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
 
         .box {
             display: flex;
@@ -15,14 +20,10 @@
             padding: 25px;
             border-radius: 15px;
             background-color: #29435C;
+            font-size: 22px;
 
-            .box-title {
-                font-size: 22px;
-            }
-
-            .box-content {
-                margin-top: 10px;
-                text-align: left;
+            .value {
+                font-size: 18px;
             }
 
             .buttons {
@@ -36,33 +37,17 @@
                     font-size: 16px;
                 }
             }
-
-            .loading,
-            .info {
-                margin-top: 10px;
-
-                i {
-                    font-size: 26px;
-                }
-            }
-        }
-
-        .status .box-content {
-            text-align: center;
-
-            .led {
-                margin-right: 5px;
-            }
         }
 
         @media screen and (orientation: portrait) {
-            flex-direction: column;
             align-items: initial;
-            font-size: 14px;
 
             .box {
-                .box-content {
-                    text-align: center;
+                text-align: center;
+                font-size: 18px;
+
+                .value {
+                    font-size: 14px;
                 }
 
                 .buttons .button {
