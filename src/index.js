@@ -6,12 +6,13 @@ import Login from "./login";
 import Home from "./home";
 import WifiClients from "./wifiClients";
 import DhcpLeases from "./dhcpLeases";
+import BannedDevices from "./bannedDevices";
+import DeviceClass from "./device";
 import { NotFound } from "./other";
 
 import "./styles/common.scss";
 
-class Website extends Component {
-
+class Panel extends Component {
     render() {
 
         if (!localStorage.token)
@@ -23,6 +24,8 @@ class Website extends Component {
                     <Route path="/" element={<Home />} />
                     <Route path="/wificlients" element={<WifiClients />} />
                     <Route path="/dhcpleases" element={<DhcpLeases />} />
+                    <Route path="/banneddevices" element={<BannedDevices />} />
+                    <Route path="/devices/:mac" element={<DeviceClass />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
@@ -30,4 +33,4 @@ class Website extends Component {
     }
 }
 
-createRoot(document.getElementById("root")).render(<Website />);
+createRoot(document.getElementById("root")).render(<Panel />);

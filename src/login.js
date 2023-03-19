@@ -42,7 +42,7 @@ export default class Login extends Component {
 
             <div className="title">Connexion</div>
 
-            <div className="form">
+            <div className="box">
 
                 {this.state.requesting ? <Loading /> : null}
                 {this.state.info}

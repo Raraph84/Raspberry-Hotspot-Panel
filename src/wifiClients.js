@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { getWifiClients } from "./api";
 import { formatDuration } from "./utils";
@@ -11,18 +12,14 @@ export default class WifiClients extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, clients: null };
+        this.state = { requesting: false, info: null, wifiClients: null };
     }
 
     componentDidMount() {
-        this.refresh();
-    }
-
-    refresh() {
 
         this.setState({ requesting: true, info: null });
-        getWifiClients().then((clients) => {
-            this.setState({ requesting: false, clients });
+        getWifiClients().then((wifiClients) => {
+            this.setState({ requesting: false, wifiClients });
         }).catch((error) => {
             if (error === "Invalid token") {
                 localStorage.removeItem("token");
@@ -50,29 +47,23 @@ export default class WifiClients extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="boxes">{this.state.clients ? <>
+            <div className="boxes">{this.state.wifiClients ? <>
 
                 <div className="box">
-                    <div>Nombre d'appareils connectés : {this.state.clients.length}</div>
-                    <div className="buttons">
-                        <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                    </div>
+                    <div>Nombre d'appareils connectés : {this.state.wifiClients.length}</div>
                 </div>
 
                 <div className="clients">
-                    {this.state.clients.map((client, index) => <div className="box" key={index}>
-                        <div>Nom :</div>
-                        <div className="value">{client.hostname ? client.hostname : "Inconnu"}</div>
-                        <div>Adresse IP :</div>
-                        <div className="value">{client.ip}</div>
+                    {this.state.wifiClients.map((wifiClient, index) => <div className="box" key={index}>
                         <div>Adresse MAC :</div>
-                        <div className="value">{client.mac}</div>
+                        <div className="value">{wifiClient.mac}</div>
                         <div>Connecté pendant :</div>
-                        <div className="value">{formatDuration(client.connectedDuration)}</div>
+                        <div className="value">{formatDuration(wifiClient.connectedDuration)}</div>
                         <div>Utilisation du réseau :</div>
-                        <div className="value">{formatBandwidthUsage(client)}</div>
-                        <div>Expiration du bail DHCP dans :</div>
-                        <div className="value">{formatDuration(client.expirationDate - Date.now())}</div>
+                        <div className="value">{formatBandwidthUsage(wifiClient)}</div>
+                        <div className="buttons">
+                            <Link to={"/devices/" + wifiClient.mac} className="button">Voir l'appareil</Link>
+                        </div>
                     </div>)}
                 </div>
 

@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
-import { getDhcpLeases, getSystemBandwidthUsage, getSystemStats, getWifiClients, getWifiStatus, startWifi, stopSystem, stopWifi } from "./api";
+import { getBannedDevices, getDhcpLeases, getSystemBandwidthUsage, getSystemStats, getWifiClients, getWifiStatus, startWifi, stopSystem, stopWifi } from "./api";
 
 import "./styles/home.scss";
 
@@ -21,7 +21,7 @@ export default class Home extends Component {
                 <BandwidthUsage />
                 <WifiClients />
                 <DhcpLeases />
-                <Bans />
+                <BannedDevices />
             </div>
         </div>;
     }
@@ -79,17 +79,16 @@ class SystemStats extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box-content">
-                {this.state.systemStats ? <>
-                    <div>Utilisation du processeur : {this.state.systemStats.cpuUsage}%</div>
-                    <div>Température du processeur : {this.state.systemStats.cpuTemp}°C</div>
-                    <div>Utilisation de la mémoire : {this.state.systemStats.usedMem}G/{this.state.systemStats.totalMem}G ({Math.round(this.state.systemStats.usedMem / this.state.systemStats.totalMem * 100 * 100) / 100}%)</div>
-                    <div>Actif depuis : {formatDuration(this.state.systemStats.uptime)}</div>
-                </> : null}
-                <div className="buttons">
-                    <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                    {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => processStopSystem()}>Arrêter le système</button> : null}
-                </div>
+            {this.state.systemStats ? <div>
+                <div>Utilisation du processeur : {this.state.systemStats.cpuUsage}%</div>
+                <div>Température du processeur : {this.state.systemStats.cpuTemp}°C</div>
+                <div>Utilisation de la mémoire : {this.state.systemStats.usedMem}G/{this.state.systemStats.totalMem}G ({Math.round(this.state.systemStats.usedMem / this.state.systemStats.totalMem * 100 * 100) / 100}%)</div>
+                <div>Actif depuis : {formatDuration(this.state.systemStats.uptime)}</div>
+            </div> : null}
+
+            <div className="buttons">
+                <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
+                {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => processStopSystem()}>Arrêter le système</button> : null}
             </div>
         </div>;
     }
@@ -138,15 +137,14 @@ class BandwidthUsage extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box-content">
-                {this.state.bandwidthUsage ? <>
-                    <div>Total : {formatBandwidthUsage(this.state.bandwidthUsage.total)} Go</div>
-                    <div>Mois : {formatBandwidthUsage(this.state.bandwidthUsage.month)} Go</div>
-                    <div>Journée : {formatBandwidthUsage(this.state.bandwidthUsage.day)} Go</div>
-                </> : null}
-                <div className="buttons">
-                    <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                </div>
+            {this.state.bandwidthUsage ? <div>
+                <div>Total : {formatBandwidthUsage(this.state.bandwidthUsage.total)} Go</div>
+                <div>Mois : {formatBandwidthUsage(this.state.bandwidthUsage.month)} Go</div>
+                <div>Journée : {formatBandwidthUsage(this.state.bandwidthUsage.day)} Go</div>
+            </div> : null}
+
+            <div className="buttons">
+                <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
             </div>
         </div>;
     }
@@ -162,10 +160,6 @@ class AccessPoint extends Component {
     }
 
     componentDidMount() {
-        this.refresh();
-    }
-
-    refresh() {
 
         this.setState({ requesting: true, info: null });
         getWifiStatus().then((status) => {
@@ -184,45 +178,43 @@ class AccessPoint extends Component {
         const toggleWifi = () => {
             this.setState({ requesting: true, info: null });
             if (!this.state.status) {
-                startWifi()
-                    .then(() => this.setState({ requesting: false, status: true }))
-                    .catch((error) => {
-                        if (error === "Invalid token") {
-                            localStorage.removeItem("token");
-                            window.location.reload();
-                        } else
-                            this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
-                    });
+                startWifi().then(() => {
+                    this.setState({ requesting: false, status: true });
+                }).catch((error) => {
+                    if (error === "Invalid token") {
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                    } else
+                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+                });
             } else {
-                stopWifi()
-                    .then(() => this.setState({ requesting: false, status: false }))
-                    .catch((error) => {
-                        if (error === "Invalid token") {
-                            localStorage.removeItem("token");
-                            window.location.reload();
-                        } else
-                            this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
-                    });
+                stopWifi().then(() => {
+                    this.setState({ requesting: false, status: false });
+                }).catch((error) => {
+                    if (error === "Invalid token") {
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                    } else
+                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+                });
             }
         }
 
-        return <div className="box status">
+        return <div className="box">
 
             <div className="box-title">Point d'accès :</div>
 
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box-content">
-                {this.state.status !== null ? <>
-                    <i className="fa-solid fa-circle led" style={{ color: this.state.status ? "green" : "red" }} />
-                    <span>{this.state.status ? "Actif" : "Inactif"}</span>
-                </> : null}
-                <div className="buttons">
-                    <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                    {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => toggleWifi()}>{this.state.status ? "Désactiver" : "Activer"}</button> : null}
-                </div>
-            </div>
+            {this.state.status !== null ? <div>
+                <i className="fa-solid fa-circle led" style={{ color: this.state.status ? "green" : "red" }} />
+                <span>{this.state.status ? "Actif" : "Inactif"}</span>
+            </div> : null}
+
+            {this.state.status !== null ? <div className="buttons">
+                {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => toggleWifi()}>{this.state.status ? "Désactiver" : "Activer"}</button> : null}
+            </div> : null}
         </div >;
     }
 }
@@ -233,18 +225,14 @@ class WifiClients extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, clients: null };
+        this.state = { requesting: false, info: null, wifiClients: null };
     }
 
     componentDidMount() {
-        this.refresh();
-    }
-
-    refresh() {
 
         this.setState({ requesting: true, info: null });
-        getWifiClients().then((clients) => {
-            this.setState({ requesting: false, clients });
+        getWifiClients().then((wifiClients) => {
+            this.setState({ requesting: false, wifiClients });
         }).catch((error) => {
             if (error === "Invalid token") {
                 localStorage.removeItem("token");
@@ -255,7 +243,6 @@ class WifiClients extends Component {
     }
 
     render() {
-
         return <div className="box">
 
             <div className="box-title">Appareils connectés :</div>
@@ -263,14 +250,12 @@ class WifiClients extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box-content">
-                {this.state.clients ? <>
-                    <div>Nombre d'appareils connectés : {this.state.clients.length}</div>
-                </> : null}
-                <div className="buttons">
-                    <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                    <Link className="button" to="/wificlients">Voir les appareils</Link>
-                </div>
+            {this.state.wifiClients ? <div>
+                <div>Nombre d'appareils connectés : {this.state.wifiClients.length}</div>
+            </div> : null}
+
+            <div className="buttons">
+                <Link className="button" to="/wificlients">Voir les appareils</Link>
             </div>
         </div >;
     }
@@ -282,18 +267,14 @@ class DhcpLeases extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, leases: null };
+        this.state = { requesting: false, info: null, dhcpLeases: null };
     }
 
     componentDidMount() {
-        this.refresh();
-    }
-
-    refresh() {
 
         this.setState({ requesting: true, info: null });
-        getDhcpLeases().then((leases) => {
-            this.setState({ requesting: false, leases });
+        getDhcpLeases().then((dhcpLeases) => {
+            this.setState({ requesting: false, dhcpLeases });
         }).catch((error) => {
             if (error === "Invalid token") {
                 localStorage.removeItem("token");
@@ -304,7 +285,6 @@ class DhcpLeases extends Component {
     }
 
     render() {
-
         return <div className="box">
 
             <div className="box-title">Baux DHCP :</div>
@@ -312,58 +292,55 @@ class DhcpLeases extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box-content">
-                {this.state.leases ? <>
-                    <div>Nombre de baux DHCP : {this.state.leases.length}</div>
-                </> : null}
-                <div className="buttons">
-                    <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                    <Link className="button" to="/dhcpleases">Voir les baux</Link>
-                </div>
+            {this.state.dhcpLeases ? <div>
+                <div>Nombre de baux DHCP : {this.state.dhcpLeases.length}</div>
+            </div> : null}
+
+            <div className="buttons">
+                <Link className="button" to="/dhcpleases">Voir les baux</Link>
             </div>
-        </div >;
+        </div>;
     }
 }
 
-class Bans extends Component {
+class BannedDevices extends Component {
 
     constructor(props) {
 
         super(props);
 
-        this.state = { requesting: false, info: null, bans: null };
+        this.state = { requesting: false, info: null, bannedDevices: null };
     }
 
     componentDidMount() {
-        this.refresh();
-    }
 
-    refresh() {
-        //TODO
+        this.setState({ requesting: true, info: null });
+        getBannedDevices().then((bannedDevices) => {
+            this.setState({ requesting: false, bannedDevices });
+        }).catch((error) => {
+            if (error === "Invalid token") {
+                localStorage.removeItem("token");
+                window.location.reload();
+            } else
+                this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+        });
     }
 
     render() {
-
         return <div className="box">
-            <div className="box-title">Bannissements :</div>
-            <div className="box-content">En développement...</div>
-        </div>
-
-        /*return <div className="box">
 
             <div className="box-title">Bannissements :</div>
 
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box-content">
-                {this.state.bans ? <>
-                    <div>Nombre de bannissements : {this.state.bans.length}</div>
-                </> : null}
-                <div className="buttons">
-                    <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                </div>
+            {this.state.bannedDevices ? <div>
+                <div>Nombre de bannissements : {this.state.bannedDevices.length}</div>
+            </div> : null}
+
+            <div className="buttons">
+                <Link className="button" to="/banneddevices">Voir les bannissements</Link>
             </div>
-        </div>;*/
+        </div>;
     }
 }

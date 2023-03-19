@@ -1,4 +1,4 @@
-.home {
+.device {
     .boxes {
         display: flex;
         flex-wrap: wrap;
@@ -20,19 +20,6 @@
                 font-size: 22px;
             }
 
-            .loading i {
-                font-size: 26px;
-            }
-
-            //TODO
-            .box-content {
-                text-align: left;
-            }
-
-            .led {
-                margin-right: 5px;
-            }
-
             .buttons {
                 display: flex;
                 justify-content: center;
@@ -45,11 +32,6 @@
 
             .box {
                 font-size: 18px;
-
-                //TODO
-                .box-content {
-                    text-align: center;
-                }
 
                 .buttons .button {
                     font-size: 16px;

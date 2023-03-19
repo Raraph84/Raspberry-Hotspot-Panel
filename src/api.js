@@ -18,9 +18,8 @@ export const getSystemStats = async () => new Promise((resolve, reject) => {
         headers: { authorization: localStorage.getItem("token") }
     }).then((res) => {
         if (res.ok) res.json().then((res) => {
-            const client = { ...res };
-            delete client.code;
-            resolve(client);
+            delete res.code;
+            resolve(res);
         }).catch((error) => reject(error));
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
@@ -33,9 +32,8 @@ export const getSystemBandwidthUsage = async () => new Promise((resolve, reject)
         headers: { authorization: localStorage.getItem("token") }
     }).then((res) => {
         if (res.ok) res.json().then((res) => {
-            const client = { ...res };
-            delete client.code;
-            resolve(client);
+            delete res.code;
+            resolve(res);
         }).catch((error) => reject(error));
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
@@ -91,7 +89,7 @@ export const getWifiClients = async () => new Promise((resolve, reject) => {
         method: "GET",
         headers: { authorization: localStorage.getItem("token") }
     }).then((res) => {
-        if (res.ok) res.json().then((res) => resolve(res.clients)).catch((error) => reject(error));
+        if (res.ok) res.json().then((res) => resolve(res.wifiClients)).catch((error) => reject(error));
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
 });
@@ -103,9 +101,8 @@ export const getWifiClient = async (mac) => new Promise((resolve, reject) => {
         headers: { authorization: localStorage.getItem("token") }
     }).then((res) => {
         if (res.ok) res.json().then((res) => {
-            const client = { ...res };
-            delete client.code;
-            resolve(client);
+            delete res.code;
+            resolve(res);
         }).catch((error) => reject(error));
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
@@ -117,7 +114,69 @@ export const getDhcpLeases = async () => new Promise((resolve, reject) => {
         method: "GET",
         headers: { authorization: localStorage.getItem("token") }
     }).then((res) => {
-        if (res.ok) res.json().then((res) => resolve(res.leases)).catch((error) => reject(error));
+        if (res.ok) res.json().then((res) => resolve(res.dhcpLeases)).catch((error) => reject(error));
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const getDhcpLease = async (mac) => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/dhcp/leases/" + mac, {
+        method: "GET",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) res.json().then((res) => {
+            delete res.code;
+            resolve(res);
+        }).catch((error) => reject(error));
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const getBannedDevices = async () => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/banneddevices", {
+        method: "GET",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) res.json().then((res) => resolve(res.bannedDevices)).catch((error) => reject(error));
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const getBannedDevice = async (mac) => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/banneddevices/" + mac, {
+        method: "GET",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) res.json().then((res) => {
+            delete res.code;
+            resolve(res);
+        }).catch((error) => reject(error));
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const banDevice = async (mac, reason) => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/banneddevices", {
+        method: "POST",
+        headers: { authorization: localStorage.getItem("token") },
+        body: JSON.stringify({ mac, reason })
+    }).then((res) => {
+        if (res.ok) resolve();
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const unbanDevice = async (mac) => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/banneddevices/" + mac, {
+        method: "DELETE",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) resolve();
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
 });

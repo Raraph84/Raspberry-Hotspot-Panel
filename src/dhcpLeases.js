@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { getDhcpLeases } from "./api";
 import { formatDuration } from "./utils";
@@ -11,18 +12,14 @@ export default class DhcpLeases extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, leases: null };
+        this.state = { requesting: false, info: null, dhcpLeases: null };
     }
 
     componentDidMount() {
-        this.refresh();
-    }
 
-    refresh() {
-
-        this.setState({ requesting: true, info: null });
-        getDhcpLeases().then((leases) => {
-            this.setState({ requesting: false, leases });
+        this.setState({ requesting: true });
+        getDhcpLeases().then((dhcpLeases) => {
+            this.setState({ requesting: false, dhcpLeases });
         }).catch((error) => {
             if (error === "Invalid token") {
                 localStorage.removeItem("token");
@@ -43,25 +40,25 @@ export default class DhcpLeases extends Component {
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="boxes">{this.state.leases ? <>
+            <div className="boxes">{this.state.dhcpLeases ? <>
 
                 <div className="box">
-                    <div>Nombre de baux DHCP : {this.state.leases.length}</div>
-                    <div className="buttons">
-                        <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                    </div>
+                    <div>Nombre de baux DHCP : {this.state.dhcpLeases.length}</div>
                 </div>
 
                 <div className="leases">
-                    {this.state.leases.map((lease, index) => <div className="box" key={index}>
+                    {this.state.dhcpLeases.map((dhcpLease, index) => <div className="box" key={index}>
                         <div>Nom :</div>
-                        <div className="value">{lease.hostname ? lease.hostname : "Inconnu"}</div>
+                        <div className="value">{dhcpLease.hostname ? dhcpLease.hostname : "Inconnu"}</div>
                         <div>Adresse IP :</div>
-                        <div className="value">{lease.ip}</div>
+                        <div className="value">{dhcpLease.ip}</div>
                         <div>Adresse MAC :</div>
-                        <div className="value">{lease.mac}</div>
+                        <div className="value">{dhcpLease.mac}</div>
                         <div>Expiration du bail DHCP dans :</div>
-                        <div className="value">{formatDuration(lease.expirationDate - Date.now())}</div>
+                        <div className="value">{formatDuration(dhcpLease.expirationDate - Date.now())}</div>
+                        <div className="buttons">
+                            <Link to={"/devices/" + dhcpLease.mac} className="button">Voir l'appareil</Link>
+                        </div>
                     </div>)}
                 </div>
 
