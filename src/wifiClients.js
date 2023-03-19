@@ -67,6 +67,10 @@ export default class WifiClients extends Component {
                             <div>Utilisation du réseau :</div>
                             <div>{formatBandwidthUsage(wifiClient)}</div>
                         </div>
+                        <div>
+                            <div>Prénom :</div>
+                            <div>{wifiClient.firstName ? wifiClient.firstName : "Inconnu"}</div>
+                        </div>
                         <div className="buttons">
                             <Link to={"/devices/" + wifiClient.mac} className="button">Voir l'appareil</Link>
                         </div>

@@ -64,6 +64,10 @@ export default class DhcpLeases extends Component {
                             <div>Expiration du bail DHCP dans :</div>
                             <div>{formatDuration(dhcpLease.expirationDate - Date.now())}</div>
                         </div>
+                        <div>
+                            <div>Prénom :</div>
+                            <div>{dhcpLease.firstName ? dhcpLease.firstName : "Inconnu"}</div>
+                        </div>
                         <div className="buttons">
                             <Link to={"/devices/" + dhcpLease.mac} className="button">Voir l'appareil</Link>
                         </div>

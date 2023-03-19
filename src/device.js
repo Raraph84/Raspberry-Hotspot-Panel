@@ -157,7 +157,7 @@ class Device extends Component {
                         </div>
                         <div>
                             <div>Prénom :</div>
-                            <div>{this.state.wifiClient.firstname || "Inconnu"}</div>
+                            <div>{this.state.wifiClient.firstName || "Inconnu"}</div>
                         </div>
                     </> : <>
                         <div>
@@ -191,7 +191,7 @@ class Device extends Component {
                         </div>
                         <div>
                             <div>Prénom :</div>
-                            <div>{this.state.dhcpLease.firstname || "Inconnu"}</div>
+                            <div>{this.state.dhcpLease.firstName || "Inconnu"}</div>
                         </div>
                     </> : <>
                         <div>
@@ -213,7 +213,7 @@ class Device extends Component {
                         </div>
                         <div>
                             <div>Prénom :</div>
-                            <div>{this.state.bannedDevice.firstname || "Inconnu"}</div>
+                            <div>{this.state.bannedDevice.firstName || "Inconnu"}</div>
                         </div>
                     </> : <>
                         <div>
