@@ -55,12 +55,18 @@ export default class WifiClients extends Component {
 
                 <div className="clients">
                     {this.state.wifiClients.map((wifiClient, index) => <div className="box" key={index}>
-                        <div>Adresse MAC :</div>
-                        <div className="value">{wifiClient.mac}</div>
-                        <div>Connecté pendant :</div>
-                        <div className="value">{formatDuration(wifiClient.connectedDuration)}</div>
-                        <div>Utilisation du réseau :</div>
-                        <div className="value">{formatBandwidthUsage(wifiClient)}</div>
+                        <div>
+                            <div>Adresse MAC :</div>
+                            <div>{wifiClient.mac}</div>
+                        </div>
+                        <div>
+                            <div>Connecté pendant :</div>
+                            <div>{formatDuration(wifiClient.connectedDuration)}</div>
+                        </div>
+                        <div>
+                            <div>Utilisation du réseau :</div>
+                            <div>{formatBandwidthUsage(wifiClient)}</div>
+                        </div>
                         <div className="buttons">
                             <Link to={"/devices/" + wifiClient.mac} className="button">Voir l'appareil</Link>
                         </div>

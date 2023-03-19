@@ -47,12 +47,18 @@ export default class BannedDevices extends Component {
 
                 <div className="bans">
                     {this.state.bannedDevices.map((bannedDevice, index) => <div className="box" key={index}>
-                        <div>Adresse MAC :</div>
-                        <div className="value">{bannedDevice.mac}</div>
-                        <div>Raison :</div>
-                        <div className="value">{bannedDevice.reason}</div>
-                        <div>Prénom :</div>
-                        <div className="value">{bannedDevice.firstName ? bannedDevice.firstName : "Inconnu"}</div>
+                        <div>
+                            <div>Adresse MAC :</div>
+                            <div>{bannedDevice.mac}</div>
+                        </div>
+                        <div>
+                            <div>Raison :</div>
+                            <div>{bannedDevice.reason}</div>
+                        </div>
+                        <div>
+                            <div>Prénom :</div>
+                            <div>{bannedDevice.firstName ? bannedDevice.firstName : "Inconnu"}</div>
+                        </div>
                         <div className="buttons">
                             <Link to={"/devices/" + bannedDevice.mac} className="button">Voir l'appareil</Link>
                         </div>

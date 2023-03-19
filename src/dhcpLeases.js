@@ -48,14 +48,22 @@ export default class DhcpLeases extends Component {
 
                 <div className="leases">
                     {this.state.dhcpLeases.map((dhcpLease, index) => <div className="box" key={index}>
-                        <div>Nom :</div>
-                        <div className="value">{dhcpLease.hostname ? dhcpLease.hostname : "Inconnu"}</div>
-                        <div>Adresse IP :</div>
-                        <div className="value">{dhcpLease.ip}</div>
-                        <div>Adresse MAC :</div>
-                        <div className="value">{dhcpLease.mac}</div>
-                        <div>Expiration du bail DHCP dans :</div>
-                        <div className="value">{formatDuration(dhcpLease.expirationDate - Date.now())}</div>
+                        <div>
+                            <div>Nom :</div>
+                            <div>{dhcpLease.hostname ? dhcpLease.hostname : "Inconnu"}</div>
+                        </div>
+                        <div>
+                            <div>Adresse IP :</div>
+                            <div>{dhcpLease.ip}</div>
+                        </div>
+                        <div>
+                            <div>Adresse MAC :</div>
+                            <div>{dhcpLease.mac}</div>
+                        </div>
+                        <div>
+                            <div>Expiration du bail DHCP dans :</div>
+                            <div>{formatDuration(dhcpLease.expirationDate - Date.now())}</div>
+                        </div>
                         <div className="buttons">
                             <Link to={"/devices/" + dhcpLease.mac} className="button">Voir l'appareil</Link>
                         </div>

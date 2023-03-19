@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
-import { getBannedDevices, getDhcpLeases, getSystemBandwidthUsage, getSystemStats, getWifiClients, getWifiStatus, startWifi, stopSystem, stopWifi } from "./api";
+import { getWifiStatus, startWifi, stopWifi, getSystemStats, stopSystem, getSystemBandwidthUsage, getWifiClients, getDhcpLeases, getBannedDevices } from "./api";
 
 import "./styles/home.scss";
 
@@ -24,6 +24,75 @@ export default class Home extends Component {
                 <BannedDevices />
             </div>
         </div>;
+    }
+}
+
+class AccessPoint extends Component {
+
+    constructor(props) {
+
+        super(props);
+
+        this.state = { requesting: false, info: null, status: null };
+    }
+
+    componentDidMount() {
+
+        this.setState({ requesting: true, info: null });
+        getWifiStatus().then((status) => {
+            this.setState({ requesting: false, status });
+        }).catch((error) => {
+            if (error === "Invalid token") {
+                localStorage.removeItem("token");
+                window.location.reload();
+            } else
+                this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+        });
+    }
+
+    render() {
+
+        const toggleWifi = () => {
+            this.setState({ requesting: true, info: null });
+            if (!this.state.status) {
+                startWifi().then(() => {
+                    this.setState({ requesting: false, status: true });
+                }).catch((error) => {
+                    if (error === "Invalid token") {
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                    } else
+                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+                });
+            } else {
+                stopWifi().then(() => {
+                    this.setState({ requesting: false, status: false });
+                }).catch((error) => {
+                    if (error === "Invalid token") {
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                    } else
+                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+                });
+            }
+        }
+
+        return <div className="box">
+
+            <div className="box-title">Point d'accès :</div>
+
+            {this.state.requesting ? <Loading /> : null}
+            {this.state.info}
+
+            {this.state.status !== null ? <div>
+                <i className="fa-solid fa-circle led" style={{ color: this.state.status ? "green" : "red" }} />
+                <span>{this.state.status ? "Actif" : "Inactif"}</span>
+            </div> : null}
+
+            {this.state.status !== null ? <div className="buttons">
+                {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => toggleWifi()}>{this.state.status ? "Désactiver" : "Activer"}</button> : null}
+            </div> : null}
+        </div >;
     }
 }
 
@@ -147,75 +216,6 @@ class BandwidthUsage extends Component {
                 <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
             </div>
         </div>;
-    }
-}
-
-class AccessPoint extends Component {
-
-    constructor(props) {
-
-        super(props);
-
-        this.state = { requesting: false, info: null, status: null };
-    }
-
-    componentDidMount() {
-
-        this.setState({ requesting: true, info: null });
-        getWifiStatus().then((status) => {
-            this.setState({ requesting: false, status });
-        }).catch((error) => {
-            if (error === "Invalid token") {
-                localStorage.removeItem("token");
-                window.location.reload();
-            } else
-                this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
-        });
-    }
-
-    render() {
-
-        const toggleWifi = () => {
-            this.setState({ requesting: true, info: null });
-            if (!this.state.status) {
-                startWifi().then(() => {
-                    this.setState({ requesting: false, status: true });
-                }).catch((error) => {
-                    if (error === "Invalid token") {
-                        localStorage.removeItem("token");
-                        window.location.reload();
-                    } else
-                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
-                });
-            } else {
-                stopWifi().then(() => {
-                    this.setState({ requesting: false, status: false });
-                }).catch((error) => {
-                    if (error === "Invalid token") {
-                        localStorage.removeItem("token");
-                        window.location.reload();
-                    } else
-                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
-                });
-            }
-        }
-
-        return <div className="box">
-
-            <div className="box-title">Point d'accès :</div>
-
-            {this.state.requesting ? <Loading /> : null}
-            {this.state.info}
-
-            {this.state.status !== null ? <div>
-                <i className="fa-solid fa-circle led" style={{ color: this.state.status ? "green" : "red" }} />
-                <span>{this.state.status ? "Actif" : "Inactif"}</span>
-            </div> : null}
-
-            {this.state.status !== null ? <div className="buttons">
-                {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => toggleWifi()}>{this.state.status ? "Désactiver" : "Activer"}</button> : null}
-            </div> : null}
-        </div >;
     }
 }
 

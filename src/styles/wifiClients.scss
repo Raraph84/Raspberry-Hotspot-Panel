@@ -1,5 +1,4 @@
 .wifi-clients {
-
     .boxes {
         display: flex;
         flex-direction: column;
@@ -17,36 +16,32 @@
         .box {
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
             padding: 25px;
             border-radius: 15px;
             background-color: #29435C;
             font-size: 20px;
 
-            .value {
-                font-size: 18px;
-            }
-
             .buttons {
                 display: flex;
                 justify-content: center;
-                gap: 5px;
-                margin-top: 10px;
+                gap: 10px;
             }
         }
 
         @media screen and (orientation: portrait) {
             align-items: initial;
 
+            .clients {
+                flex-direction: column;
+            }
+
             .box {
-                text-align: center;
                 font-size: 18px;
 
-                .value {
-                    font-size: 14px;
-                }
-
                 .buttons .button {
-                    font-size: 14px;
+                    font-size: 16px;
                 }
             }
         }
