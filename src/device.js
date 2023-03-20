@@ -1,10 +1,11 @@
 import { Component } from "react";
 import { useParams } from "react-router-dom";
-import { banDevice, getBannedDevice, getDhcpLease, getWifiClient, unbanDevice } from "./api";
+import { getRegisteredDevice, getWifiClient, getDhcpLease, getBannedDevice, unregisterDevice, banDevice, unbanDevice } from "./api";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
 
 import "./styles/device.scss";
+import moment from "moment";
 
 class Device extends Component {
 
@@ -12,12 +13,29 @@ class Device extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, wifiClient: null, dhcpLease: null, bannedDevice: null };
+        this.state = { requesting: false, info: null, registeredDevice: null, wifiClient: null, dhcpLease: null, bannedDevice: null };
     }
 
     async componentDidMount() {
 
         this.setState({ requesting: true });
+
+        let registeredDevice;
+        try {
+            registeredDevice = await getRegisteredDevice(this.props.params.mac);
+        } catch (error) {
+            if (error === "Invalid token") {
+                localStorage.removeItem("token");
+                window.location.reload();
+                return;
+            } else if (error === "Invalid MAC address") {
+                this.setState({ requesting: false, info: <Info type="error">Adresse MAC invalide</Info> });
+                return;
+            } else if (error !== "Device not registered") {
+                this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+                return;
+            }
+        }
 
         let wifiClient;
         try {
@@ -70,12 +88,12 @@ class Device extends Component {
             }
         }
 
-        if (!wifiClient && !dhcpLease && !bannedDevice) {
+        if (!registeredDevice && !wifiClient && !dhcpLease && !bannedDevice) {
             this.setState({ requesting: false, info: <Info type="error">Appareil introuvable</Info> });
             return;
         }
 
-        this.setState({ requesting: false, wifiClient, dhcpLease, bannedDevice });
+        this.setState({ requesting: false, registeredDevice, wifiClient, dhcpLease, bannedDevice });
     }
 
     render() {
@@ -87,6 +105,20 @@ class Device extends Component {
             const download = Math.round(client.rxBytes / 1000000000 * 100) / 100;
             const upload = Math.round(client.txBytes / 1000000000 * 100) / 100;
             return total + " Go (" + download + " Go / " + upload + " Go)";
+        }
+
+        const unregister = async () => {
+
+            this.setState({ requesting: true, info: null });
+            unregisterDevice(this.state.registeredDevice.mac).then(() => {
+                this.setState({ requesting: false, registeredDevice: null });
+            }).catch((error) => {
+                if (error === "Invalid token") {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                } else
+                    this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+            });
         }
 
         const ban = async () => {
@@ -137,6 +169,31 @@ class Device extends Component {
 
             <div className="boxes">
                 <div className="box">
+                    <div className="box-title">Enregistrement :</div>
+                    {this.state.registeredDevice ? <>
+                        <div>
+                            <div>Enregistré :</div>
+                            <div>Oui</div>
+                        </div>
+                        <div>
+                            <div>Prénom :</div>
+                            <div>{this.state.registeredDevice.firstName}</div>
+                        </div>
+                        <div>
+                            <div>Date d'enregistrement :</div>
+                            <div>{moment(this.state.registeredDevice.registeredDate).format("DD/MM/YYYY à HH:mm")}</div>
+                        </div>
+                        <div className="buttons">
+                            <button className="button" disabled={this.state.requesting} onClick={() => unregister()}>Désinscrire</button>
+                        </div>
+                    </> : <>
+                        <div>
+                            <div>Enregistré :</div>
+                            <div>Non</div>
+                        </div>
+                    </>}
+                </div>
+                <div className="box">
                     <div className="box-title">Appareil connecté :</div>
                     {this.state.wifiClient ? <>
                         <div>
@@ -154,10 +211,6 @@ class Device extends Component {
                         <div>
                             <div>Utilisation du réseau :</div>
                             <div>{formatBandwidthUsage(this.state.wifiClient)}</div>
-                        </div>
-                        <div>
-                            <div>Prénom :</div>
-                            <div>{this.state.wifiClient.firstName || "Inconnu"}</div>
                         </div>
                     </> : <>
                         <div>
@@ -189,10 +242,6 @@ class Device extends Component {
                             <div>Expiration dans :</div>
                             <div>{formatDuration(this.state.dhcpLease.expirationDate - Date.now())}</div>
                         </div>
-                        <div>
-                            <div>Prénom :</div>
-                            <div>{this.state.dhcpLease.firstName || "Inconnu"}</div>
-                        </div>
                     </> : <>
                         <div>
                             <div>Actif :</div>
@@ -210,10 +259,6 @@ class Device extends Component {
                         <div>
                             <div>Raison :</div>
                             <div>{this.state.bannedDevice.reason}</div>
-                        </div>
-                        <div>
-                            <div>Prénom :</div>
-                            <div>{this.state.bannedDevice.firstName || "Inconnu"}</div>
                         </div>
                     </> : <>
                         <div>
