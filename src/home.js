@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
-import { getWifiStatus, startWifi, stopWifi, getSystemStats, stopSystem, getSystemBandwidthUsage, getWifiClients, getDhcpLeases, getBannedDevices } from "./api";
+import { getWifiStatus, startWifi, stopWifi, getSystemStats, systemReboot, systemPoweroff, getSystemBandwidthUsage, getWifiClients, getDhcpLeases, getBannedDevices } from "./api";
 
 import "./styles/home.scss";
 
@@ -90,7 +90,7 @@ class AccessPoint extends Component {
             </div> : null}
 
             {this.state.status !== null ? <div className="buttons">
-                {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => toggleWifi()}>{this.state.status ? "Désactiver" : "Activer"}</button> : null}
+                <button className="button" disabled={this.state.requesting} onClick={() => toggleWifi()}>{this.state.status ? "Désactiver" : "Activer"}</button>
             </div> : null}
         </div >;
     }
@@ -125,20 +125,36 @@ class SystemStats extends Component {
 
     render() {
 
-        const processStopSystem = () => {
+        const processPoweroff = () => {
 
             if (!window.confirm("Voulez vous vraiment arrêter le système ?")) return;
 
             this.setState({ requesting: true, info: null });
-            stopSystem()
-                .then(() => this.setState({ requesting: false, info: <Info color="green">Arrêt du système en cours...</Info> }))
-                .catch((error) => {
-                    if (error === "Invalid token") {
-                        localStorage.removeItem("token");
-                        window.location.reload();
-                    } else
-                        this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
-                });
+            systemPoweroff().then(() => {
+                this.setState({ requesting: false, info: <Info color="green">Arrêt du système en cours...</Info> });
+            }).catch((error) => {
+                if (error === "Invalid token") {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                } else
+                    this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+            });
+        }
+
+        const processReboot = () => {
+
+            if (!window.confirm("Voulez vous vraiment redémarrer le système ?")) return;
+
+            this.setState({ requesting: true, info: null });
+            systemReboot().then(() => {
+                this.setState({ requesting: false, info: <Info color="green">Redémarrage du système en cours...</Info> });
+            }).catch((error) => {
+                if (error === "Invalid token") {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                } else
+                    this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+            });
         }
 
         return <div className="box">
@@ -157,7 +173,8 @@ class SystemStats extends Component {
 
             <div className="buttons">
                 <button className="button" disabled={this.state.requesting} onClick={() => this.refresh()}>Rafraichir</button>
-                {this.state.status !== null ? <button className="button" disabled={this.state.requesting} onClick={() => processStopSystem()}>Arrêter le système</button> : null}
+                <button className="button" disabled={this.state.requesting} onClick={() => processReboot()}>Redémarrer</button>
+                <button className="button" disabled={this.state.requesting} onClick={() => processPoweroff()}>Arrêter</button>
             </div>
         </div>;
     }

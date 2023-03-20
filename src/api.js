@@ -50,9 +50,20 @@ export const getWifiStatus = async () => new Promise((resolve, reject) => {
     }).catch((error) => reject(error));
 });
 
-export const stopSystem = async () => new Promise((resolve, reject) => {
+export const systemPoweroff = async () => new Promise((resolve, reject) => {
 
-    fetch(HOST + "/system/stop", {
+    fetch(HOST + "/system/poweroff", {
+        method: "POST",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) resolve();
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const systemReboot = async () => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/system/reboot", {
         method: "POST",
         headers: { authorization: localStorage.getItem("token") }
     }).then((res) => {
