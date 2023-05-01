@@ -1,4 +1,4 @@
-const HOST = process.env.NODE_ENV === "production" ? document.location.origin + ":8080" : "http://192.168.1.16:8080";
+const HOST = process.env.NODE_ENV === "production" ? document.location.origin + ":8080" : "http://192.168.1.19:8080";
 
 export const login = async (password) => new Promise((resolve, reject) => {
 
@@ -115,6 +115,17 @@ export const getWifiClient = async (mac) => new Promise((resolve, reject) => {
             delete res.code;
             resolve(res);
         }).catch((error) => reject(error));
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
+export const getRegisteredDevices = async () => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/registereddevices", {
+        method: "GET",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) res.json().then((res) => resolve(res.registeredDevices)).catch((error) => reject(error));
         else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
     }).catch((error) => reject(error));
 });

@@ -4,10 +4,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./login";
 import Home from "./home";
+import RegisteredDevices from "./registeredDevices";
 import WifiClients from "./wifiClients";
 import DhcpLeases from "./dhcpLeases";
 import BannedDevices from "./bannedDevices";
-import DeviceClass from "./device";
+import Device from "./device";
 import { NotFound } from "./other";
 
 import "./styles/common.scss";
@@ -22,10 +23,11 @@ class Panel extends Component {
             <div className="content">
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/registereddevices" element={<RegisteredDevices />} />
                     <Route path="/wificlients" element={<WifiClients />} />
                     <Route path="/dhcpleases" element={<DhcpLeases />} />
                     <Route path="/banneddevices" element={<BannedDevices />} />
-                    <Route path="/devices/:mac" element={<DeviceClass />} />
+                    <Route path="/devices/:mac" element={<Device />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>

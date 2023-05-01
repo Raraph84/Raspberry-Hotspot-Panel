@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 import { getRegisteredDevice, getWifiClient, getDhcpLease, getBannedDevice, unregisterDevice, banDevice, unbanDevice } from "./api";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
+import moment from "moment";
 
 import "./styles/device.scss";
-import moment from "moment";
 
 class Device extends Component {
 

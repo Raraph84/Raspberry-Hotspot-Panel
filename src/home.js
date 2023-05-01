@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Link } from "react-router-dom";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
-import { getWifiStatus, startWifi, stopWifi, getSystemStats, systemReboot, systemPoweroff, getSystemBandwidthUsage, getWifiClients, getDhcpLeases, getBannedDevices } from "./api";
+import { getWifiStatus, startWifi, stopWifi, getSystemStats, systemReboot, systemPoweroff, getSystemBandwidthUsage, getRegisteredDevices, getWifiClients, getDhcpLeases, getBannedDevices } from "./api";
 
 import "./styles/home.scss";
 
@@ -19,6 +19,7 @@ export default class Home extends Component {
                 <AccessPoint />
                 <SystemStats />
                 <BandwidthUsage />
+                <RegisteredDevices />
                 <WifiClients />
                 <DhcpLeases />
                 <BannedDevices />
@@ -272,7 +273,49 @@ class WifiClients extends Component {
             </div> : null}
 
             <div className="buttons">
-                <Link className="button" to="/wificlients">Voir les appareils</Link>
+                <Link className="button" to="/wificlients">Voir les appareils connectés</Link>
+            </div>
+        </div >;
+    }
+}
+
+class RegisteredDevices extends Component {
+
+    constructor(props) {
+
+        super(props);
+
+        this.state = { requesting: false, info: null, registeredDevices: null };
+    }
+
+    componentDidMount() {
+
+        this.setState({ requesting: true, info: null });
+        getRegisteredDevices().then((registeredDevices) => {
+            this.setState({ requesting: false, registeredDevices });
+        }).catch((error) => {
+            if (error === "Invalid token") {
+                localStorage.removeItem("token");
+                window.location.reload();
+            } else
+                this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+        });
+    }
+
+    render() {
+        return <div className="box">
+
+            <div className="box-title">Appareils enregistrés :</div>
+
+            {this.state.requesting ? <Loading /> : null}
+            {this.state.info}
+
+            {this.state.registeredDevices ? <div>
+                <div>Nombre d'appareils enregistrés : {this.state.registeredDevices.length}</div>
+            </div> : null}
+
+            <div className="buttons">
+                <Link className="button" to="/registereddevices">Voir les appareils enregistrés</Link>
             </div>
         </div >;
     }
