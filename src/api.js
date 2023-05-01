@@ -119,6 +119,17 @@ export const getWifiClient = async (mac) => new Promise((resolve, reject) => {
     }).catch((error) => reject(error));
 });
 
+export const disconnectWifiClient = async (mac) => new Promise((resolve, reject) => {
+
+    fetch(HOST + "/wifi/clients/" + mac, {
+        method: "DELETE",
+        headers: { authorization: localStorage.getItem("token") }
+    }).then((res) => {
+        if (res.ok) resolve();
+        else res.json().then((res) => reject(res.message)).catch((error) => reject(error));
+    }).catch((error) => reject(error));
+});
+
 export const getRegisteredDevices = async () => new Promise((resolve, reject) => {
 
     fetch(HOST + "/registereddevices", {

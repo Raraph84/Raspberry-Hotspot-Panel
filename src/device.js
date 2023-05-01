@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { useParams } from "react-router-dom";
-import { getRegisteredDevice, getWifiClient, getDhcpLease, getBannedDevice, unregisterDevice, banDevice, unbanDevice } from "./api";
+import { getRegisteredDevice, getWifiClient, getDhcpLease, getBannedDevice, unregisterDevice, banDevice, unbanDevice, disconnectWifiClient } from "./api";
 import { Info, Loading } from "./other";
 import { formatDuration } from "./utils";
 import moment from "moment";
@@ -160,6 +160,20 @@ class Device extends Component {
             });
         }
 
+        const disconnect = async () => {
+
+            this.setState({ requesting: true, info: null });
+            disconnectWifiClient(this.state.wifiClient.mac).then(() => {
+                this.setState({ requesting: false, wifiClient: null });
+            }).catch((error) => {
+                if (error === "Invalid token") {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                } else
+                    this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
+            });
+        }
+
         return <div className="device">
 
             <div className="title">Appareil</div>
@@ -211,6 +225,9 @@ class Device extends Component {
                         <div>
                             <div>Utilisation du réseau :</div>
                             <div>{formatBandwidthUsage(this.state.wifiClient)}</div>
+                        </div>
+                        <div className="buttons">
+                            <button className="button" disabled={this.state.requesting} onClick={() => disconnect()}>Déconnecter</button>
                         </div>
                     </> : <>
                         <div>
