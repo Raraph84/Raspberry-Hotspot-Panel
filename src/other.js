@@ -20,6 +20,6 @@ export class Info extends Component {
 
 export class Loading extends Component {
     render() {
-        return <div className="loading"><i className="fas fa-spinner" /></div>
+        return <div className="loading"><i className="fa-solid fa-spinner" /></div>
     }
 }

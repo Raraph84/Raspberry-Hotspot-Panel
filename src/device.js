@@ -13,7 +13,7 @@ class Device extends Component {
 
         super(props);
 
-        this.state = { requesting: false, info: null, registeredDevice: null, wifiClient: null, dhcpLease: null, bannedDevice: null };
+        this.state = { requesting: false, info: null, mac: null, registeredDevice: null, wifiClient: null, dhcpLease: null, bannedDevice: null };
     }
 
     async componentDidMount() {
@@ -127,7 +127,7 @@ class Device extends Component {
             if (reason === null) return;
 
             this.setState({ requesting: true, info: null });
-            banDevice(this.state.wifiClient.mac, reason).then(() => {
+            banDevice(this.props.params.mac, reason).then(() => {
                 getBannedDevice(this.props.params.mac).then((bannedDevice) => {
                     this.setState({ requesting: false, bannedDevice });
                 }).catch((error) => {
@@ -141,7 +141,9 @@ class Device extends Component {
                 if (error === "Invalid token") {
                     localStorage.removeItem("token");
                     window.location.reload();
-                } else
+                } else if (error === "Reason too long")
+                    this.setState({ requesting: false, info: <Info type="error">La raison est trop longue</Info> });
+                else
                     this.setState({ requesting: false, info: <Info>Un problème est survenu !</Info> });
             });
         }
