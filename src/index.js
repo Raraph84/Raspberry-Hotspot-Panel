@@ -8,6 +8,7 @@ import RegisteredDevices from "./registeredDevices";
 import WifiClients from "./wifiClients";
 import DhcpLeases from "./dhcpLeases";
 import BannedDevices from "./bannedDevices";
+import DnsQueries from "./dnsQueries";
 import Device from "./device";
 import { NotFound } from "./other";
 
@@ -28,6 +29,7 @@ class Panel extends Component {
                     <Route path="/dhcpleases" element={<DhcpLeases />} />
                     <Route path="/banneddevices" element={<BannedDevices />} />
                     <Route path="/devices/:mac" element={<Device />} />
+                    <Route path="/dnsqueries" element={<DnsQueries />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>

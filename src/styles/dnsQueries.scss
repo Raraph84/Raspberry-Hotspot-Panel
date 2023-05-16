@@ -1,0 +1,27 @@
+.dns-queries {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .box {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 25px;
+        margin-top: 15px;
+        border-radius: 15px;
+        background-color: #29435C;
+        font-size: 20px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    @media screen and (orientation: portrait) {
+        align-items: initial;
+
+        .box {
+            font-size: 16px;
+            gap: 5px;
+        }
+    }
+}

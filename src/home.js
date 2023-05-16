@@ -23,6 +23,7 @@ export default class Home extends Component {
                 <WifiClients />
                 <DhcpLeases />
                 <BannedDevices />
+                <DnsQueries />
             </div>
         </div>;
     }
@@ -400,6 +401,19 @@ class BannedDevices extends Component {
 
             <div className="buttons">
                 <Link className="button" to="/banneddevices">Voir les bannissements</Link>
+            </div>
+        </div>;
+    }
+}
+
+class DnsQueries extends Component {
+    render() {
+        return <div className="box">
+
+            <div className="box-title">Requetes DNS :</div>
+
+            <div className="buttons">
+                <Link className="button" to="/dnsqueries">Voir les requetes DNS</Link>
             </div>
         </div>;
     }
