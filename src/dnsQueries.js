@@ -43,11 +43,11 @@ export default class DnsQueries extends Component {
 
             } else if (message.event === "DNS_QUERY") {
 
-                const isScrolledToBottom = this.boxRef ? this.boxRef.current.scrollHeight - this.boxRef.current.scrollTop === this.boxRef.current.clientHeight : false;
+                const scroll = this.boxRef.current ? this.boxRef.current.scrollHeight - this.boxRef.current.scrollTop - this.boxRef.current.clientHeight : 10;
 
                 this.state.dnsQueries.push({ mac: message.mac, name: message.name, domain: message.domain });
                 this.setState({ dnsQueries: this.state.dnsQueries }, () => {
-                    if (isScrolledToBottom && this.boxRef) this.boxRef.current.scrollTop = this.boxRef.current.scrollHeight - this.boxRef.current.clientHeight;
+                    if (scroll < 10 && this.boxRef.current) this.boxRef.current.scrollTop = this.boxRef.current.scrollHeight - this.boxRef.current.clientHeight;
                 });
             }
         });
@@ -58,9 +58,18 @@ export default class DnsQueries extends Component {
                 window.location.reload();
                 return;
             }
+            if (this.gateway.dontReconnect) return;
             this.setState({ requesting: true });
             setTimeout(() => this.connect(), 1000);
         });
+    }
+
+    componentWillUnmount() {
+
+        if (this.gateway) {
+            this.gateway.close();
+            this.gateway.dontReconnect = true;
+        }
     }
 
     render() {
