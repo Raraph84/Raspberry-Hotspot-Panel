@@ -410,10 +410,10 @@ class DnsQueries extends Component {
     render() {
         return <div className="box">
 
-            <div className="box-title">Requetes DNS :</div>
+            <div className="box-title">Requêtes DNS :</div>
 
             <div className="buttons">
-                <Link className="button" to="/dnsqueries">Voir les requetes DNS</Link>
+                <Link className="button" to="/dnsqueries">Voir les requêtes DNS</Link>
             </div>
         </div>;
     }

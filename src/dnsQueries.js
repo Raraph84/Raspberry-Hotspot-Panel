@@ -45,7 +45,9 @@ export default class DnsQueries extends Component {
 
                 const scroll = this.boxRef.current ? this.boxRef.current.scrollHeight - this.boxRef.current.scrollTop - this.boxRef.current.clientHeight : 10;
 
-                this.state.dnsQueries.push({ mac: message.mac, name: message.name, domain: message.domain });
+                this.state.dnsQueries.push({ date: message.date, mac: message.mac, name: message.name, domain: message.domain });
+                if (this.state.dnsQueries.length > 1000) this.state.dnsQueries.shift();
+
                 this.setState({ dnsQueries: this.state.dnsQueries }, () => {
                     if (scroll < 10 && this.boxRef.current) this.boxRef.current.scrollTop = this.boxRef.current.scrollHeight - this.boxRef.current.clientHeight;
                 });
@@ -74,18 +76,22 @@ export default class DnsQueries extends Component {
 
     render() {
 
-        document.title = "Requetes DNS | Raspberry Pi Hotspot";
+        document.title = "Requêtes DNS | Raspberry Pi Hotspot";
 
         return <div className="dns-queries">
 
-            <div className="title">Requetes DNS</div>
+            <div className="title">Requêtes DNS</div>
 
             {this.state.requesting ? <Loading /> : null}
             {this.state.info}
 
-            <div className="box" ref={this.boxRef}>{this.state.dnsQueries.length > 0 ? this.state.dnsQueries.map((query, i) =>
-                <div key={i}>{query.domain} from {query.name}</div>
-            ) : "Aucune requete"}</div>
+            <div className="box" ref={this.boxRef}>
+                <div className="queries">
+                    {this.state.dnsQueries.length > 0
+                        ? this.state.dnsQueries.sort((a, b) => a.date - b.date).map((query, i) => <div key={i}>{query.domain} from {query.name}</div>)
+                        : <div>Aucune requête</div>}
+                </div>
+            </div>
 
         </div>;
     }
