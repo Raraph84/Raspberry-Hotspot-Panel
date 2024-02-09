@@ -226,9 +226,9 @@ class BandwidthUsage extends Component {
             {this.state.info}
 
             {this.state.bandwidthUsage ? <div>
-                <div>Total : {formatBandwidthUsage(this.state.bandwidthUsage.total)} Go</div>
-                <div>Mois : {formatBandwidthUsage(this.state.bandwidthUsage.month)} Go</div>
-                <div>Journée : {formatBandwidthUsage(this.state.bandwidthUsage.day)} Go</div>
+                <div>Total : {formatBandwidthUsage(this.state.bandwidthUsage.total)}</div>
+                <div>Mois : {formatBandwidthUsage(this.state.bandwidthUsage.month)}</div>
+                <div>Journée : {formatBandwidthUsage(this.state.bandwidthUsage.day)}</div>
             </div> : null}
 
             <div className="buttons">
